@@ -103,5 +103,23 @@ app.patch("/tasks/:id/priority", authMiddleware, async (req, res) => {
   if (!task) return res.status(404).json({ message: "Task not found" });
   res.json(task);
 });
+//Edit Task
+app.patch("/tasks/:id/text", authMiddleware, async (req, res) => {
+  const { text } = req.body;
 
+  try {
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      { text },
+      { new: true }
+    );
+
+    if (!task) return res.status(404).json({ message: "Task not found" });
+
+    res.json(task);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error updating task text" });
+  }
+});
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
